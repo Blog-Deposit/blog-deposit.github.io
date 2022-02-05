@@ -1,0 +1,221 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>使用ApacheBench对网站进行压力测试 | 沿岸</title><meta name="keywords" content="Apache,ApacheBench,DDOS,Layer7,网站压测"><meta name="author" content="DeKvin"><meta name="copyright" content="DeKvin"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="ApacheBench是Apache自带的压测工具，对本机的配置要求非常低，能够很容易地上手并提供一些基本的性能测试。  好，现在让我们来安装它。 我用的还是Debian11，用这两条命令。 apt-get updateapt-get install apache2-utils -y 搞定，很简单，现在来说怎么使用。 如果不出意外的话，输入ab会出现下列提示。  -n 请求数 要执行的总请求数-">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用ApacheBench对网站进行压力测试">
+<meta property="og:url" content="http://collections.ml/2022/01/15/%E4%BD%BF%E7%94%A8apachebench%E5%AF%B9%E7%BD%91%E7%AB%99%E8%BF%9B%E8%A1%8C%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="沿岸">
+<meta property="og:description" content="ApacheBench是Apache自带的压测工具，对本机的配置要求非常低，能够很容易地上手并提供一些基本的性能测试。  好，现在让我们来安装它。 我用的还是Debian11，用这两条命令。 apt-get updateapt-get install apache2-utils -y 搞定，很简单，现在来说怎么使用。 如果不出意外的话，输入ab会出现下列提示。  -n 请求数 要执行的总请求数-">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-01-15T12:39:27.000Z">
+<meta property="article:modified_time" content="2022-02-05T17:53:47.512Z">
+<meta property="article:author" content="DeKvin">
+<meta property="article:tag" content="Apache">
+<meta property="article:tag" content="ApacheBench">
+<meta property="article:tag" content="DDOS">
+<meta property="article:tag" content="Layer7">
+<meta property="article:tag" content="网站压测">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://collections.ml/2022/01/15/%E4%BD%BF%E7%94%A8apachebench%E5%AF%B9%E7%BD%91%E7%AB%99%E8%BF%9B%E8%A1%8C%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '使用ApacheBench对网站进行压力测试',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2022-02-05 12:53:47'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div></div><hr/></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">沿岸</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">使用ApacheBench对网站进行压力测试</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-01-15T12:39:27.000Z" title="发表于 2022-01-15 07:39:27">2022-01-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-02-05T17:53:47.512Z" title="更新于 2022-02-05 12:53:47">2022-02-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9D%82%E9%A1%B9/">杂项</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="使用ApacheBench对网站进行压力测试"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><blockquote>
+<p>ApacheBench是Apache自带的压测工具，对本机的配置要求非常低，能够很容易地上手并提供一些基本的性能测试。</p>
+</blockquote>
+<p>好，现在让我们来安装它。 我用的还是Debian11，用这两条命令。</p>
+<p>apt-get update<br>apt-get install apache2-utils -y</p>
+<p>搞定，很简单，现在来说怎么使用。 如果不出意外的话，输入<strong>ab</strong>会出现下列提示。 <img src="https://p1.meituan.net/dpgroup/95c19084d2a8ca593c7e5850c1ffc296699224.jpg"></p>
+<p>-n 请求数 要执行的总请求数<br>-c 并发数 一次进行的多个请求的数量<br>-t 时间限制 用于基准测试的最大秒数<br>-s 超时限制 等待每个响应的最大秒数 默认为30秒<br>-b windowsize TCP发送&#x2F;接收缓冲区的大小，字节数<br>-B address 进行外发连接时要绑定的地址<br>-p postfile 包含POST数据的文件。记得也要设置-T<br>-u putfile 包含数据的文件，用于PUT。也要记得设置-T<br>-T content-type 用于POST&#x2F;PUT数据的内容类型头，例如’application&#x2F;x-www-form-urlencoded’。默认是’text&#x2F;plain’。<br>-v verbosity 要打印多少故障排除信息<br>-w：以HTML表的格式输出结果。默认时，它是白色背景的两列宽度的一张表。<br>-i：执行HEAD请求，而不是GET。<br>-x：设置<table>属性的字符串。<br>-X：对请求使用代理服务器。<br>-y：设置<tr>属性的字符串。<br>-z：设置<td>属性的字符串。<br>-C属性 添加cookie，例如：’Apache&#x3D;1234’。(可重复)<br>-H属性 添加任意头行，例如：’Accept-Encoding: gzip’，插入在所有正常的标题行之后。(可重复)<br>-A属性 添加基本www认证，属性为冒号分隔的用户名和密码。<br>-P属性添加基本代理认证，属性为冒号分隔的用户名和密码。<br>-X proxy:port 要使用的代理服务器和端口号<br>-V 打印版本号并退出<br>-k 使用HTTP KeepAlive功能<br>-d 不显示百分位数的服务表。<br>-S 不显示置信度估计器和警告。<br>-q 在做超过150个请求时不显示进度<br>-l 接受可变的文件长度（用于动态页面）。<br>-g 文件名 将收集的数据输出到gnuplot格式文件。<br>-e 文件名 输出带有百分比的CSV文件。<br>-r 不在套接字接收错误时退出。<br>-m method 方法名称<br>-h 显示使用信息(此信息)<br>-I 禁用TLS服务器名称指示（SNI）扩展名<br>-Z ciphersuite 指定SSL&#x2F;TLS密码套件（参见openssl密码）。<br>-f 协议 指定SSL&#x2F;TLS协议<br>(SSL2, TLS1, TLS1.1, TLS1.2 或 ALL)<br>-E certfile 指定可选的客户证书链和私人证书。</p>
+<p>可以根据自己的需求进行选择，这里有个简单的示例</p>
+<p>ab -n 1000 -c 100 <a target="_blank" rel="noopener" href="http://127.0.0.1/">http://127.0.0.1/</a></p>
+<p>测试完毕后返回结果。</p>
+<p>Server Software:        cloudflare<br>Server Hostname:        optionalnodes.com<br>Server Port:            80</p>
+<p>Document Path:          &#x2F;<br>Document Length:        50349 bytes</p>
+<p>Concurrency Level:      100<br>Time taken for tests:   2.649 seconds<br>Complete requests:      1000<br>Failed requests:        127<br>   (Connect: 0, Receive: 0, Length: 127, Exceptions: 0)<br>Total transferred:      51029531 bytes<br>HTML transferred:       50349139 bytes<br>Requests per second:    377.51 [#&#x2F;sec] (mean)<br>Time per request:       264.895 [ms] (mean)<br>Time per request:       2.649 [ms] (mean, across all concurrent requests)<br>Transfer rate:          18812.54 [Kbytes&#x2F;sec] received</p>
+<p>Connection Times (ms)<br>              min  mean[+&#x2F;-sd] median   max<br>Connect:        2    3   1.0      3      12<br>Processing:   165  203  60.4    180     694<br>Waiting:      164  202  58.3    179     413<br>Total:        167  206  60.7    182     696</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Apache/">Apache</a><a class="post-meta__tags" href="/tags/ApacheBench/">ApacheBench</a><a class="post-meta__tags" href="/tags/DDOS/">DDOS</a><a class="post-meta__tags" href="/tags/Layer7/">Layer7</a><a class="post-meta__tags" href="/tags/%E7%BD%91%E7%AB%99%E5%8E%8B%E6%B5%8B/">网站压测</a></div><div class="post_share"></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div id="comment-switch"><span class="first-comment">Valine</span><span class="switch-btn"></span><span class="second-comment">Disqus</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="disqus_thread"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">DeKvin</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/21/%E4%BD%BF%E7%94%A8smokeping%E5%AF%B9vps%E8%BF%9B%E8%A1%8C24%E5%B0%8F%E6%97%B6%E7%9B%91%E6%B5%8B%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%ACdocker%E7%89%88/" title="使用SmokePing对VPS进行24小时监测 [一键脚本&amp;Docker版]">使用SmokePing对VPS进行24小时监测 [一键脚本&amp;Docker版]</a><time datetime="2022-01-21T17:12:42.000Z" title="发表于 2022-01-21 12:12:42">2022-01-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/15/%E4%BD%BF%E7%94%A8apachebench%E5%AF%B9%E7%BD%91%E7%AB%99%E8%BF%9B%E8%A1%8C%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95/" title="使用ApacheBench对网站进行压力测试">使用ApacheBench对网站进行压力测试</a><time datetime="2022-01-15T12:39:27.000Z" title="发表于 2022-01-15 07:39:27">2022-01-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/01/synology%EF%BC%88%E7%BE%A4%E6%99%96%EF%BC%89-nas%E8%AE%BE%E7%BD%AEnginx-proxy-manager/" title="Synology（群晖）NAS设置Nginx Proxy Manager">Synology（群晖）NAS设置Nginx Proxy Manager</a><time datetime="2022-01-01T06:56:29.000Z" title="发表于 2022-01-01 01:56:29">2022-01-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/31/debian11%E5%AE%89%E8%A3%85nginxproxymanager%E8%BF%9B%E8%A1%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" title="Debian11安装Nginx Proxy Manager进行反代">Debian11安装Nginx Proxy Manager进行反代</a><time datetime="2021-12-31T15:24:48.000Z" title="发表于 2021-12-31 10:24:48">2021-12-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/16/%E6%B3%A8%E5%86%8Cwebdock%E8%8E%B7%E5%BE%9715%E6%AC%A7%E5%85%83%E8%B5%A0%E9%87%91%E5%B9%B6%E5%BC%80%E5%90%AF%E5%85%8D%E8%B4%B913%E4%B8%AA%E6%9C%88%E7%9A%84vps/" title="(已过期)注册Webdock获得15欧元赠金并开启免费15个月的VPS">(已过期)注册Webdock获得15欧元赠金并开启免费15个月的VPS</a><time datetime="2021-12-16T15:36:21.000Z" title="发表于 2021-12-16 10:36:21">2021-12-16</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By DeKvin</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: '',
+      appKey: '',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script>function loadDisqus () {
+  var disqus_config = function () {
+    this.page.url = 'http://collections.ml/2022/01/15/%E4%BD%BF%E7%94%A8apachebench%E5%AF%B9%E7%BD%91%E7%AB%99%E8%BF%9B%E8%A1%8C%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95/'
+    this.page.identifier = '2022/01/15/使用apachebench对网站进行压力测试/'
+    this.page.title = '使用ApacheBench对网站进行压力测试'
+  };
+
+  window.disqusReset = () => {
+    DISQUS.reset({
+      reload: true,
+      config: disqus_config
+    })
+  }
+
+  if (window.DISQUS) disqusReset()
+  else {
+    (function() { 
+      var d = document, s = d.createElement('script');
+      s.src = 'https://.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  }
+}
+
+if ('Valine' === 'Disqus' || !false) {
+  if (false) btf.loadComment(document.getElementById('disqus_thread'), loadDisqus)
+  else loadDisqus()
+} else {
+  function loadOtherComment () {
+    loadDisqus()
+  }
+}
+</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

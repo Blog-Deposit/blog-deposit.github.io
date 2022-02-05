@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Synology（群晖）NAS设置Nginx Proxy Manager | 沿岸</title><meta name="keywords" content="Nginx Proxy Manager,Docker,NAS,群晖"><meta name="author" content="DeKvin"><meta name="copyright" content="DeKvin"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言如果你想在网络上公开任何服务，使用反向代理是提高安全性和性能的一个好方法。怎么说呢？反向代理其实就是一个坐在你的源服务器前的服务器，将客户的请求转发给你的源服务器。 通俗点说，你只需要公开一个服务器（使用80&#x2F;443端口），就可以公开你想要公开的许多网络服务。  记住，这是Synology 程序门户的替代方案，你可以在其中设置反向代理。 如果你的是只创建一个反向代理，你可以用它来代替">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Synology（群晖）NAS设置Nginx Proxy Manager">
+<meta property="og:url" content="http://collections.ml/2022/01/01/synology%EF%BC%88%E7%BE%A4%E6%99%96%EF%BC%89-nas%E8%AE%BE%E7%BD%AEnginx-proxy-manager/index.html">
+<meta property="og:site_name" content="沿岸">
+<meta property="og:description" content="前言如果你想在网络上公开任何服务，使用反向代理是提高安全性和性能的一个好方法。怎么说呢？反向代理其实就是一个坐在你的源服务器前的服务器，将客户的请求转发给你的源服务器。 通俗点说，你只需要公开一个服务器（使用80&#x2F;443端口），就可以公开你想要公开的许多网络服务。  记住，这是Synology 程序门户的替代方案，你可以在其中设置反向代理。 如果你的是只创建一个反向代理，你可以用它来代替">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-01-01T06:56:29.000Z">
+<meta property="article:modified_time" content="2022-02-05T17:53:47.508Z">
+<meta property="article:author" content="DeKvin">
+<meta property="article:tag" content="Nginx Proxy Manager">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="NAS">
+<meta property="article:tag" content="群晖">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://collections.ml/2022/01/01/synology%EF%BC%88%E7%BE%A4%E6%99%96%EF%BC%89-nas%E8%AE%BE%E7%BD%AEnginx-proxy-manager/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Synology（群晖）NAS设置Nginx Proxy Manager',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-02-05 12:53:47'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div></div><hr/></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">沿岸</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Synology（群晖）NAS设置Nginx Proxy Manager</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-01-01T06:56:29.000Z" title="发表于 2022-01-01 01:56:29">2022-01-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-02-05T17:53:47.508Z" title="更新于 2022-02-05 12:53:47">2022-02-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9D%82%E9%A1%B9/">杂项</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Synology（群晖）NAS设置Nginx Proxy Manager"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>如果你想在网络上公开任何服务，使用反向代理是提高安全性和性能的一个好方法。怎么说呢？反向代理其实就是一个坐在你的源服务器前的服务器，将客户的请求转发给你的源服务器。 通俗点说，你只需要公开一个服务器（使用80&#x2F;443端口），就可以公开你想要公开的许多网络服务。 <img src="https://p0.meituan.net/dpgroup/139995c061e7dd067ea1906f20bba3b351345.jpg"> 记住，这是<a target="_blank" rel="noopener" href="https://www.synology.com/en-global/knowledgebase/DSM/help/DSM/AdminCenter/application_appportalias">Synology 程序门户</a>的替代方案，你可以在其中设置反向代理。 如果你的是只创建一个反向代理，你可以用它来代替，因为不需要进行任何配置（除了反向代理设置）。</p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><p>1. 设置说明 1.1 Macvlan &amp; Bridge Docker 网络接口设置 1.2 MariaDB 安装和配置 1.3 防火墙设置 1.4 容器设置 2. Nginx Proxy Manager 设置 3. 结论</p>
+<h2 id="1-设置说明-Nginx-代理管理器-Synology-NAS"><a href="#1-设置说明-Nginx-代理管理器-Synology-NAS" class="headerlink" title="1. 设置说明 - Nginx 代理管理器 Synology NAS"></a>1. 设置说明 - Nginx 代理管理器 Synology NAS</h2><p>本教程将使用 Synology NAS 和 Docker。由于Nginx Proxy Manager会使用数据库，因此我们需要安装两个不同的容器。 一个用于装数据库，一个用于装Nginx Proxy Manager。默认情况下，Synology 使用80 和 443端口，所以使用我们的主机网络接口并不理想。 因此，我们需要创建一个macvlan网络接口（在Docker中），这样就能绕过此端口冲突。 1. 从 Synology 的软件中心安装Docker。 2. 然后创建一些文件夹，将映射我们的 Docker 容器。默认情况下，Docker 包将在安装完成后创建一个名为 docker 的文件夹。在这个文件夹中，创建一个名为mariadb和nginx-proxy的文件夹。 <img src="https://p0.meituan.net/dpgroup/034a2330448b90fa5d8b061ee1e4936521036.jpg"> 3. 在nginx-proxy内，创建两个名为data和letsencrypt的子文件夹。 <img src="https://p0.meituan.net/dpgroup/58a6e6b1f474cc03f19cfad0aa4579fb21598.jpg"> 4. 创建一个名为config.json的文件并传到 nginx-proxy文件夹里，文件的内容下面给出。 <strong>确保将SYNOLOGY_NAS_IP更改为 Synology NAS 的 IP 地址！</strong></p>
+<p>{<br>   “database”: {<br>   “engine”: “mysql”,<br>   “host”: “SYNOLOGY_NAS_IP”,<br>   “name”: “nginxproxymanager”,<br>   “user”: “nginxproxymanager”,<br>   “password”: “nginxproxymanager”,<br>   “port”: 3306<br>  }<br>}</p>
+<p>5. 文件夹设置完成。</p>
+<h2 id="1-1-Macvlan-amp-Bridge-Docker-网络接口设置"><a href="#1-1-Macvlan-amp-Bridge-Docker-网络接口设置" class="headerlink" title="1.1 Macvlan &amp; Bridge Docker 网络接口设置"></a>1.1 Macvlan &amp; Bridge Docker 网络接口设置</h2><p>1. 确保可以使用 SSH 进入 Synology NAS。打开**”控制面板”<strong>，选择</strong>“终端和 SNMP”<strong>，然后选择</strong>“启用SSH服务”**。 如果你使用的是 Synology 的防火墙，记得允许端口 22 流量。 2. 使用您喜欢的 SSH 工具通过 SSH 连接到您的 Synology NAS。 3. 我们需要创建一个 Docker macvlan 网络接口。 首先，我们需要确定在 Synology NAS 上当前存在哪些网络接口，并记下适配器名称。为此，请运行以下命令，并记下包含 Synology NAS IP 地址的网络接口名称（在本例中，我的是 eth0）。</p>
+<p>ifconfig</p>
+<p><img src="https://p0.meituan.net/dpgroup/1c361ef3f5f71778b55512bde08802e672176.png"> 4. 接下来，你需要运行下面的命令，同时替换正确的子网（默认的一般是192.168.1.0&#x2F;24或192.168.0.0&#x2F;24）。 你还需要选择一个你想使用的、目前还没有使用的IP地址。我这里是用的192.168.1.198。 注意：npm_network是网络的名称（你可以根据自己的需要来代替）。</p>
+<p>sudo docker network create -d macvlan -o parent&#x3D;eth0 –subnet&#x3D;192.168.1.0&#x2F;24 –gateway&#x3D;192.168.1.1 –ip-range&#x3D;192.168.1.198&#x2F;32 npm_network</p>
+<p><img src="https://p0.meituan.net/dpgroup/9ca9bf4ad0199267c6cd24ac95ed3fe07160.jpg"> 5. 我们的网络现已创建。现在，我们可以退出 SSH 会话并在 DSM 中禁用它（如果你不使用它）。如果你禁用了它，并为其创建了一个防火墙规则，记得要把这个防火墙规则也激活。 6. 接下来，我们需要创建一个桥接网络。这将允许我们的主机（NAS）与我们的Nginx Proxy Manager容器进行通信。 打开Docker，点进网络选项。选择 “添加”，并输入一个当前未使用的子网。我创建的桥的IP地址是192.168.10.2。 <img src="https://p1.meituan.net/dpgroup/5e8a99e750eac3128d41f087da6a77ab46933.jpg"> 7. 两个网络接口现已设置完毕！</p>
+<h2 id="1-2-MariaDB-安装和配置"><a href="#1-2-MariaDB-安装和配置" class="headerlink" title="1.2 MariaDB 安装和配置"></a>1.2 MariaDB 安装和配置</h2><p>Nginx Proxy Manager需要一个数据库才能正常工作。 虽然Synology已经打包了一个MariaDB，但我喜欢通过创建第二个Docker容器，且这个容器只用于数据库，从而来分离它。 1. 打开Docker，进入<strong>注册表</strong>选项，搜索MariaDB，然后下载最新版本的MariaDB。 <img src="https://p1.meituan.net/dpgroup/b5f951555f08d02dd8d5e46f3ab954cd51268.jpg"> 2. 镜像下载完成后，点开到镜像选项，双击mariadb来设置一个新的容器。 3. 给容器随便起个名，然后选择高级设置。 <img src="https://p0.meituan.net/dpgroup/5dfa1e5c2d0381733fbc6e87a691f29736619.jpg"> 4. 选择<strong>启用自动重启</strong>。 <img src="https://p0.meituan.net/dpgroup/0a94c27bb16c62427352e155d73e6d4b16578.jpg"> 5. 在<strong>卷</strong>部分，选择<strong>添加文件夹</strong>，然后选择我们之前创建的mariadb文件夹。在挂载路径部分，输入**&#x2F;var&#x2F;lib&#x2F;mysql**。 <img src="https://p0.meituan.net/dpgroup/03d138eb43c468c37c817c3d60a65c4022426.jpg"> 6. 在”端口设置”部分中，将”本地端口”更改为3306。 注意：如果您必须使用 3306 以外的其他端口作为端口，则需要修改之前所创建的config.json文件。 <img src="https://p0.meituan.net/dpgroup/a90d6d1faa583fea9bc12e47b1e2f2c318915.jpg"> 7. 在环境部分，我们需要创建四个变量。这些变量将存储我们的root密码，数据库名称，用户名和密码。 <strong>注意：如果您不想使用下面的值（nginxproxymanager），可以将其更改为所需的任何值，只要修改之前创建的config.json文件即可。</strong> <img src="https://p0.meituan.net/dpgroup/b9c6395d5e74d7732a72020fcd192c4550785.jpg"> 8. 选择应用并创建容器，数据库现在已经创建好了。</p>
+<h2 id="1-3-防火墙设置"><a href="#1-3-防火墙设置" class="headerlink" title="1.3 防火墙设置"></a>1.3 防火墙设置</h2><p>由于我们使用的是macvlan网络接口，所以我们不需要为Nginx Proxy Manager设置专门的防火墙规则。 但是，MariaDB容器使用的却是主机网络接口，因此，需要一个防火墙规则来允许流量通过。如果你还没有设置 Synology的防火墙，这里也有一个教程，教你如何设置它。 打开”控制面板”，选择”安全”，然后选择”防火墙”。选择”编辑规则”，然后为端口3306添加允许规则。 注意：如果您在上面创建的config.json文件中使用其他端口，则需要放行你改的端口而不是3306。 <img src="https://p0.meituan.net/dpgroup/984b87bb8ff96014b87201d17c359edd22310.jpg"></p>
+<h2 id="1-4-Nginx-Proxy-Manager容器设置"><a href="#1-4-Nginx-Proxy-Manager容器设置" class="headerlink" title="1.4 Nginx Proxy Manager容器设置"></a>1.4 Nginx Proxy Manager容器设置</h2><p>1. 打开 Docker，进入到注册表，然后搜索 nginx-proxy-manager，并下载最新版本的 jc21&#x2F;nginx-proxy-manager。 <img src="https://p0.meituan.net/dpgroup/57fa37cbe4a16c7158846c30f46b4e1733250.jpg"> 2. 镜像下载完成后，点进到镜像选项里，双击jc21&#x2F;nginx-proxy-manager来设置一个新的容器。 <img src="https://p0.meituan.net/dpgroup/ae4ada8addeaaa12e113f3eb892af94f32326.jpg"> 3. 为容器命名，然后选择”高级设置” <img src="https://p0.meituan.net/dpgroup/bf4dad3e9b6c2e4d9a9c04353613385a39221.jpg"> 4. 选择”启用自动重启”。 <img src="https://p0.meituan.net/dpgroup/59a0c90c255e249273e6c8a052c3568418386.jpg"> 5. 在卷轴部分，我们需要创建两个文件夹映射和一个文件映射。 选择 **”添加文件夹”<strong>，添加data文件夹，并添加挂载路径&#x2F;data。接下来，选择letsencrypt文件夹并添加挂载路径&#x2F;etc&#x2F;letsencrypt。 选择</strong>“添加文件”**，并选择我们先前创建的config.json文件，其挂载路径为&#x2F;app&#x2F;config&#x2F;production.json。 <img src="https://p1.meituan.net/dpgroup/292693e6202ace28cfb867b8e9666f8228667.jpg"> 6. 在”网络”中，添加npm_network，npm_bridge网络，并删除网桥。 <img src="https://p0.meituan.net/dpgroup/383a0914cd5952d67c01fe804dcb2f0a23451.jpg"> 7. 匹配端口设置，改成和下面的图片一样。如果你正在使用4443、8080或8081的或其他端口，你可以把端口改为目前没有使用的。 <img src="https://p0.meituan.net/dpgroup/45e22c86bee2003d499370a883450c4226593.jpg"> 8. 选择应用并创建容器，等几分钟时间，你应该能够通过npm_network IP 地址和端口 81 访问 Nginx Proxy Manager 的后台了。</p>
+<p>http:&#x2F;&#x2F;[npm_network]:81</p>
+<h2 id="2-Nginx-Proxy-Manager-设置"><a href="#2-Nginx-Proxy-Manager-设置" class="headerlink" title="2. Nginx Proxy Manager 设置"></a>2. Nginx Proxy Manager 设置</h2><p>1.使用电子邮件地址 <strong><a href="mailto:&#97;&#100;&#x6d;&#x69;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#x6d;">&#97;&#100;&#x6d;&#x69;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#x6d;</a></strong> 和密码 <strong>changeme</strong> 来进行登录。 <img src="https://p1.meituan.net/dpgroup/f2bf83edca12bc83b2826edf925b82ba22101.jpg"> 2. 登录后，更改你的姓名和电子邮件地址，然后设置密码。 3.Nginx Proxy Manager设置好了，确保将路由器上的端口 80和443 转发到我们上面创建的macvlan网络。</p>
+<blockquote>
+<p>有的朋友在登录时遇到了 “<strong>bad gateway</strong> “的错误。在对这个问题进行了一段时间的排查后（以及评论中的一些有用的建议），有两种方法可以解决这个问题。 1. 如果 NAS 有多个网卡，并且你为其分配了多个 IP 地址，请在”config.json”文件中输入 NAS 的其他 IP 地址。 2. 将默认的 docker 桥接网络接口连接到两个容器，并在 config.json 文件中使用该 IP 地址。</p>
+</blockquote>
+<h2 id="3-结论"><a href="#3-结论" class="headerlink" title="3. 结论"></a>3. 结论</h2><p>这是一个相当复杂的教程，但我想它已经被分解得足够容易来进行理解。 你需要设置两个不同的Docker容器来让一个容器工作，这看着有点不正常，但在我看来，这却是让Nginx Proxy Manager在Synology NAS上工作的最好方法。 谢谢你阅读本教程。如果你有任何问题，请在评论中留言! 译自：<a target="_blank" rel="noopener" href="https://www.wundertech.net/nginx-proxy-manager-synology-nas-setup-instructions">https://www.wundertech.net/nginx-proxy-manager-synology-nas-setup-instructions</a></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Nginx-Proxy-Manager/">Nginx Proxy Manager</a><a class="post-meta__tags" href="/tags/Docker/">Docker</a><a class="post-meta__tags" href="/tags/NAS/">NAS</a><a class="post-meta__tags" href="/tags/%E7%BE%A4%E6%99%96/">群晖</a></div><div class="post_share"></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div id="comment-switch"><span class="first-comment">Valine</span><span class="switch-btn"></span><span class="second-comment">Disqus</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div><div><div id="disqus_thread"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">DeKvin</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E-Nginx-%E4%BB%A3%E7%90%86%E7%AE%A1%E7%90%86%E5%99%A8-Synology-NAS"><span class="toc-number">3.</span> <span class="toc-text">1. 设置说明 - Nginx 代理管理器 Synology NAS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-Macvlan-amp-Bridge-Docker-%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3%E8%AE%BE%E7%BD%AE"><span class="toc-number">4.</span> <span class="toc-text">1.1 Macvlan &amp; Bridge Docker 网络接口设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-MariaDB-%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE"><span class="toc-number">5.</span> <span class="toc-text">1.2 MariaDB 安装和配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-%E9%98%B2%E7%81%AB%E5%A2%99%E8%AE%BE%E7%BD%AE"><span class="toc-number">6.</span> <span class="toc-text">1.3 防火墙设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-Nginx-Proxy-Manager%E5%AE%B9%E5%99%A8%E8%AE%BE%E7%BD%AE"><span class="toc-number">7.</span> <span class="toc-text">1.4 Nginx Proxy Manager容器设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Nginx-Proxy-Manager-%E8%AE%BE%E7%BD%AE"><span class="toc-number">8.</span> <span class="toc-text">2. Nginx Proxy Manager 设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BB%93%E8%AE%BA"><span class="toc-number">9.</span> <span class="toc-text">3. 结论</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/21/%E4%BD%BF%E7%94%A8smokeping%E5%AF%B9vps%E8%BF%9B%E8%A1%8C24%E5%B0%8F%E6%97%B6%E7%9B%91%E6%B5%8B%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%ACdocker%E7%89%88/" title="使用SmokePing对VPS进行24小时监测 [一键脚本&amp;Docker版]">使用SmokePing对VPS进行24小时监测 [一键脚本&amp;Docker版]</a><time datetime="2022-01-21T17:12:42.000Z" title="发表于 2022-01-21 12:12:42">2022-01-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/15/%E4%BD%BF%E7%94%A8apachebench%E5%AF%B9%E7%BD%91%E7%AB%99%E8%BF%9B%E8%A1%8C%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95/" title="使用ApacheBench对网站进行压力测试">使用ApacheBench对网站进行压力测试</a><time datetime="2022-01-15T12:39:27.000Z" title="发表于 2022-01-15 07:39:27">2022-01-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/01/01/synology%EF%BC%88%E7%BE%A4%E6%99%96%EF%BC%89-nas%E8%AE%BE%E7%BD%AEnginx-proxy-manager/" title="Synology（群晖）NAS设置Nginx Proxy Manager">Synology（群晖）NAS设置Nginx Proxy Manager</a><time datetime="2022-01-01T06:56:29.000Z" title="发表于 2022-01-01 01:56:29">2022-01-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/31/debian11%E5%AE%89%E8%A3%85nginxproxymanager%E8%BF%9B%E8%A1%8C%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" title="Debian11安装Nginx Proxy Manager进行反代">Debian11安装Nginx Proxy Manager进行反代</a><time datetime="2021-12-31T15:24:48.000Z" title="发表于 2021-12-31 10:24:48">2021-12-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/16/%E6%B3%A8%E5%86%8Cwebdock%E8%8E%B7%E5%BE%9715%E6%AC%A7%E5%85%83%E8%B5%A0%E9%87%91%E5%B9%B6%E5%BC%80%E5%90%AF%E5%85%8D%E8%B4%B913%E4%B8%AA%E6%9C%88%E7%9A%84vps/" title="(已过期)注册Webdock获得15欧元赠金并开启免费15个月的VPS">(已过期)注册Webdock获得15欧元赠金并开启免费15个月的VPS</a><time datetime="2021-12-16T15:36:21.000Z" title="发表于 2021-12-16 10:36:21">2021-12-16</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By DeKvin</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: '',
+      appKey: '',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script>function loadDisqus () {
+  var disqus_config = function () {
+    this.page.url = 'http://collections.ml/2022/01/01/synology%EF%BC%88%E7%BE%A4%E6%99%96%EF%BC%89-nas%E8%AE%BE%E7%BD%AEnginx-proxy-manager/'
+    this.page.identifier = '2022/01/01/synology（群晖）-nas设置nginx-proxy-manager/'
+    this.page.title = 'Synology（群晖）NAS设置Nginx Proxy Manager'
+  };
+
+  window.disqusReset = () => {
+    DISQUS.reset({
+      reload: true,
+      config: disqus_config
+    })
+  }
+
+  if (window.DISQUS) disqusReset()
+  else {
+    (function() { 
+      var d = document, s = d.createElement('script');
+      s.src = 'https://.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  }
+}
+
+if ('Valine' === 'Disqus' || !false) {
+  if (false) btf.loadComment(document.getElementById('disqus_thread'), loadDisqus)
+  else loadDisqus()
+} else {
+  function loadOtherComment () {
+    loadDisqus()
+  }
+}
+</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
